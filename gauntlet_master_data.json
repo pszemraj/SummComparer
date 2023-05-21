@@ -27,17 +27,17 @@
    {
       "source_file": "Emie_dissertation_cleansed.txt",
       "id": "016e3d18-c4b",
-      "domain": "Unknown"
+      "domain": "academic-writing"
    },
    {
       "source_file": "gpt_peter_testing_group_exemplars.txt",
       "id": "0a1d2b3f-60f",
-      "domain": "Unknown"
+      "domain": "chat"
    },
    {
       "source_file": "navy seals copy pasta.txt",
       "id": "a2789e93-8ba",
-      "domain": "Unknown"
+      "domain": "adversarial"
    },
    {
       "source_file": "OCR_ML4HLecture02image_.txt",
@@ -97,6 +97,6 @@
    {
       "source_file": "The Most Dangerous Game--Richard Connell.txt",
       "id": "1acbba4a-b0d",
-      "domain": "Unknown"
+      "domain": "literature"
    }
 ]
