@@ -20,21 +20,38 @@ def load_master_data(master_data_file):
     return master_data
 
 
-def get_best_match(summary_file, master_data):
+def get_best_match(
+    summary_file: str or Path,
+    master_data: str or Path = "gauntlet_master_data.json",
+    filename_column: str = "filename",
+    src_prefix: str = "source_doc",
+):
+    """
+    get_best_match - match a summary file to a source file in the master data
+
+    :param strorPath summary_file: _description_
+    :param strorPath master_data: _description_, defaults to "gauntlet_master_data.json"
+    :param str filename_column: _description_, defaults to "filename"
+    :param str src_prefix: _description_, defaults to "source_doc"
+    :return _type_: _description_
+    """
     # Remove the '_summary.txt' from the summary filename
-    clean_summary_file = summary_file.replace("_summary.txt", "")
+    clean_summary_file = summary_file.replace("_summary.txt", "").strip()
 
     try:
         # Use fuzzywuzzy's process.extractOne() function to find the source file that best matches the summary file
         best_match = process.extractOne(
-            clean_summary_file, [record["source_file"] for record in master_data]
+            clean_summary_file, [record[filename_column] for record in master_data]
         )
 
         # Get the record of the best match from the master_data
         best_match_record = next(
-            record for record in master_data if record["source_file"] == best_match[0]
+            record for record in master_data if record[filename_column] == best_match[0]
         )
-
+        # update all keys to start with src_prefix
+        best_match_record = {
+            f"{src_prefix}_{k}": v for k, v in best_match_record.items()
+        }
         return best_match_record
     except KeyError as e:
         logging.error(f"KeyError - {summary_file}: {e}")
@@ -66,11 +83,10 @@ def main(
     master_data = load_master_data(master_data_file)
 
     # Load the dataframe from the CSV file
-    df = pd.read_csv(dataframe_file)
+    df = pd.read_csv(dataframe_file).convert_dtypes()
     logging.info(f"Loaded dataframe, info: {df.info()}")
     # Apply the get_best_match function to each summary file in the dataframe
-    # Use tqdm's progress_apply to show a progress bar
-    tqdm.pandas()
+    tqdm.pandas(desc="Mapping files")
     df = df.join(
         df[filename_column].progress_apply(
             lambda x: pd.Series(get_best_match(x, master_data))
