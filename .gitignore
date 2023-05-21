@@ -5,6 +5,8 @@
 *.csv
 *gauntlet/
 
+# viz
+*AutoViz_Plots/
 # scratch
 *scratch/
 *scratch/*
