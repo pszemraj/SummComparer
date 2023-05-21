@@ -22,13 +22,19 @@ def load_master_data(master_data_file):
     return master_data
 
 
-def create_dataframe(src_dir, master_data):
+def create_dataframe(
+    src_dir,
+    master_data,
+    src_prefix: str = "source_doc",
+):
     # Create a DataFrame from the master data and the original gauntlet docs text files
-    df = pd.DataFrame(master_data)
+    df = pd.DataFrame(master_data).convert_dtypes()
+    # rename the columns to start with src_prefix
+    df = df.rename(columns={k: f"{src_prefix}_{k}" for k in df.columns})
     df["text"] = ""
     errored_files = []
     for i, row in tqdm(df.iterrows(), total=df.shape[0]):
-        file_path = src_dir / row["source_file"]
+        file_path = src_dir / row[f"{src_prefix}_filename"]
         if file_path.exists():
             with file_path.open("r", encoding="utf-8") as f:
                 df.at[i, "text"] = f.read()
@@ -45,6 +51,7 @@ def main(
     master_data_file: str = "gauntlet_master_data.json",
     output_file: str = None,
     save_parquet: bool = False,
+    src_prefix: str = "source_doc",
 ):
     """
     main function for build_src_df.py
@@ -72,7 +79,7 @@ def main(
     master_data = load_master_data(master_data_file)
 
     # Create a DataFrame from the master data and the original gauntlet docs text files
-    df = create_dataframe(src_dir, master_data)
+    df = create_dataframe(src_dir, master_data, src_prefix=src_prefix)
     df = df.reset_index(drop=True).convert_dtypes()
 
     # Save the dataframe to the output CSV file
