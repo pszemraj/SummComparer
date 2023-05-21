@@ -1,0 +1,20 @@
+ASRnlp_law_lecture_week_1_v_2_c_transcription_1.txt
+ASRnlp_law_lecture_week_2_v_2_c_transcription_2.txt
+ASRnlp_law_lecture_week_3_part_1_v_2_c_transcription_3.txt
+ASR-whisper-rpunctuated_Noam Chomsky, Fundam_1669853561_0_part1.txt
+ASR-whisper-rpunctuated_Noam Chomsky, Fundam_1669853631_0_part2.txt
+Emie_dissertation_cleansed.txt
+gpt_peter_testing_group_exemplars.txt
+navy seals copy pasta.txt
+OCR_ML4HLecture02image_.txt
+OCR_ML4HLecture04RepresentationLearning.pptx_.txt
+OCR_ML4HLecture05-NLP.pptx_.txt
+OCR_PAPER_dall-e-2-annotated_.txt
+OCR_PAPER_Hong et al. - 2022 - CogVideo Large-scale Pretraining for Text-to-Video Generation via Transformers-annotated_.txt
+OCR_PAPER_Kandpal, Nieto, Jin - 2022 - Music Enhancement via Image Translation and Vocoding-annotated_.txt
+OCR_PAPER_Quadruped_Puppeteering.txt
+script_findingnemo.txt
+script_frozendisney.txt
+script_strangersonatrain.txt
+script_sunsetblvd..txt
+The Most Dangerous Game--Richard Connell.txt

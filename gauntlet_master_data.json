@@ -1,0 +1,102 @@
+[
+   {
+      "source_file": "ASRnlp_law_lecture_week_1_v_2_c_transcription_1.txt",
+      "id": "fcaadc1d-d88",
+      "domain": "ASR"
+   },
+   {
+      "source_file": "ASRnlp_law_lecture_week_2_v_2_c_transcription_2.txt",
+      "id": "e01e677f-74e",
+      "domain": "ASR"
+   },
+   {
+      "source_file": "ASRnlp_law_lecture_week_3_part_1_v_2_c_transcription_3.txt",
+      "id": "966254b2-06d",
+      "domain": "ASR"
+   },
+   {
+      "source_file": "ASR-whisper-rpunctuated_Noam Chomsky, Fundam_1669853561_0_part1.txt",
+      "id": "d672df86-21c",
+      "domain": "ASR"
+   },
+   {
+      "source_file": "ASR-whisper-rpunctuated_Noam Chomsky, Fundam_1669853631_0_part2.txt",
+      "id": "d41ce18d-a59",
+      "domain": "ASR"
+   },
+   {
+      "source_file": "Emie_dissertation_cleansed.txt",
+      "id": "016e3d18-c4b",
+      "domain": "Unknown"
+   },
+   {
+      "source_file": "gpt_peter_testing_group_exemplars.txt",
+      "id": "0a1d2b3f-60f",
+      "domain": "Unknown"
+   },
+   {
+      "source_file": "navy seals copy pasta.txt",
+      "id": "a2789e93-8ba",
+      "domain": "Unknown"
+   },
+   {
+      "source_file": "OCR_ML4HLecture02image_.txt",
+      "id": "4bd66af3-0af",
+      "domain": "OCR"
+   },
+   {
+      "source_file": "OCR_ML4HLecture04RepresentationLearning.pptx_.txt",
+      "id": "d5f5d2e2-37c",
+      "domain": "OCR"
+   },
+   {
+      "source_file": "OCR_ML4HLecture05-NLP.pptx_.txt",
+      "id": "98cf5d01-c2a",
+      "domain": "OCR"
+   },
+   {
+      "source_file": "OCR_PAPER_dall-e-2-annotated_.txt",
+      "id": "acfce2ef-a61",
+      "domain": "OCR"
+   },
+   {
+      "source_file": "OCR_PAPER_Hong et al. - 2022 - CogVideo Large-scale Pretraining for Text-to-Video Generation via Transformers-annotated_.txt",
+      "id": "2ad07f89-6ea",
+      "domain": "OCR"
+   },
+   {
+      "source_file": "OCR_PAPER_Kandpal, Nieto, Jin - 2022 - Music Enhancement via Image Translation and Vocoding-annotated_.txt",
+      "id": "cb4c51ab-2c3",
+      "domain": "OCR"
+   },
+   {
+      "source_file": "OCR_PAPER_Quadruped_Puppeteering.txt",
+      "id": "2883d626-be1",
+      "domain": "OCR"
+   },
+   {
+      "source_file": "script_findingnemo.txt",
+      "id": "5744b0ce-f7e",
+      "domain": "Script"
+   },
+   {
+      "source_file": "script_frozendisney.txt",
+      "id": "d4e6b94d-dcb",
+      "domain": "Script"
+   },
+   {
+      "source_file": "script_strangersonatrain.txt",
+      "id": "00dcead4-4dd",
+      "domain": "Script"
+   },
+   {
+      "source_file": "script_sunsetblvd..txt",
+      "id": "08de54cc-51d",
+      "domain": "Script"
+   },
+   {
+      "source_file": "The Most Dangerous Game--Richard Connell.txt",
+      "id": "1acbba4a-b0d",
+      "domain": "Unknown"
+   }
+]
