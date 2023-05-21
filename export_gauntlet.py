@@ -3,6 +3,7 @@ compile_gauntlet.py is a script that compiles the Gauntlet dataset into a single
 """
 import json
 import logging
+import shutil
 from pathlib import Path
 from typing import Optional
 from zipfile import ZipFile
@@ -50,7 +51,9 @@ def export_summary_gauntlet(
     dropbox_link: str,
     output_folder: Optional[str] = None,
     keep_zip: bool = False,
+    keep_extracted: bool = False,
     save_parquet: bool = False,
+    score_split_token: str = "Section Scores",
 ) -> None:
     """
     export_summary_gauntlet - export the summary Gauntlet dataset to a CSV data file
@@ -64,12 +67,12 @@ def export_summary_gauntlet(
     download_and_extract_data(dropbox_link, data_zip_path)
     if not keep_zip:
         data_zip_path.unlink()
-    root_dir = Path("gauntlet")
-    assert root_dir.exists(), "The specified directory does not exist."
+    extract_root_dir = Path("gauntlet")
+    assert extract_root_dir.exists(), "The specified directory does not exist."
 
     df_list = []
 
-    for f_path in tqdm(root_dir.glob("**/*"), desc="Processing files"):
+    for f_path in tqdm(extract_root_dir.glob("**/*"), desc="Processing files"):
         if f_path.is_dir() or (f_path.suffix not in {".json", ".txt"}):
             continue
 
@@ -88,13 +91,13 @@ def export_summary_gauntlet(
         try:
             with f_path.open("r", encoding="utf-8", errors="ignore") as f:
                 text = f.read()
-            text = text.split("---", maxsplit=1)[0].strip()
+            text = text.split(score_split_token, maxsplit=1)[0].strip()
         except FileNotFoundError:
             logging.error(f"File not found: {f_path}")
             continue
 
         row_dict = {
-            "GAUNTLET_PATH": f_path.relative_to(root_dir),
+            "GAUNTLET_PATH": f_path.relative_to(extract_root_dir),
             "file_name": f_path.name,
             "text": text,
         }
@@ -126,6 +129,9 @@ def export_summary_gauntlet(
         logging.info(f"Done! saved the summary data to {output_csv}")
     else:
         logging.warning("No data found in the specified directory.")
+
+    if not keep_extracted:
+        shutil.rmtree(extract_root_dir)
 
 
 if __name__ == "__main__":
