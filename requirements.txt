@@ -1,4 +1,7 @@
 fire
 pandas
+rapidfuzz
 Requests
 tqdm
+rapidfuzz==2.13.7
+pyarrow
