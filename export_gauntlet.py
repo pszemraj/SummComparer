@@ -52,7 +52,7 @@ def export_summary_gauntlet(
     output_folder: Optional[str] = None,
     keep_zip: bool = False,
     keep_extracted: bool = False,
-    save_parquet: bool = False,
+    parquet_save: bool = False,
     score_split_token: str = "Section Scores",
 ) -> None:
     """
@@ -60,7 +60,10 @@ def export_summary_gauntlet(
 
     :param str dropbox_link: link to the Dropbox zip file containing the Gauntlet dataset
     :param Optional[str] output_folder: path to the output folder, defaults to None
-    :param bool save_parquet: whether to save the DataFrame to a parquet file, defaults to False
+    :param bool parquet_save: whether to save the DataFrame to a parquet file, defaults to False
+    :param bool keep_zip: whether to keep the downloaded zip file, defaults to False
+    :param bool keep_extracted: whether to keep the extracted data, defaults to False
+    :param str score_split_token: token to split the scores on, defaults to "Section Scores"
     """
     logging.info("Downloading data...")
     data_zip_path = Path.cwd() / "data.zip"
@@ -122,7 +125,7 @@ def export_summary_gauntlet(
         df = df.convert_dtypes()
         print(df.info())
         df.to_csv(output_csv, index=False)
-        if save_parquet:
+        if parquet_save:
             output_parquet = output_folder / "gauntlet_summary_data.parquet"
             df.to_parquet(output_parquet, index=False)
             logging.info(f"Saved the summary data to {output_parquet}")
