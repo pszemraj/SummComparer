@@ -43,7 +43,7 @@ def create_dataframe(src_dir, master_data):
 def main(
     src_dir: str,
     master_data_file: str = "gauntlet_master_data.json",
-    output_file: str = "gauntlet_source_documents.csv",
+    output_file: str = None,
     save_parquet: bool = False,
 ):
     """
@@ -58,10 +58,17 @@ def main(
 
     src_dir = Path(src_dir)
     master_data_file = Path(master_data_file)
-    output_file = Path(output_file)
+    output_file = (
+        Path(output_file)
+        if output_file
+        else Path.cwd() / "output" / "gauntlet_source_documents.csv"
+    )
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+
     assert src_dir.exists(), f"{src_dir} not found"
     assert master_data_file.exists(), f"{master_data_file} not found"
     logging.info(f"Output file: {output_file}")
+
     master_data = load_master_data(master_data_file)
 
     # Create a DataFrame from the master data and the original gauntlet docs text files
