@@ -1,8 +1,9 @@
-import pandas as pd
 import json
 import sys
 import uuid
 from pathlib import Path
+
+import pandas as pd
 
 
 def infer_domain(filename):
@@ -32,13 +33,13 @@ if __name__ == "__main__":
             sys.exit()
 
     # Create a master data dataframe with unique IDs for each source file
-    master_data = pd.DataFrame(source_files, columns=["source_file"])
+    master_data = pd.DataFrame(source_files, columns=["filename"])
 
     # Assign a 12-character UUID to each source file
     master_data["id"] = [str(uuid.uuid4())[:12] for _ in range(len(master_data))]
 
     # Infer the domain from the filename
-    master_data["domain"] = master_data["source_file"].apply(infer_domain)
+    master_data["domain"] = master_data["filename"].apply(infer_domain)
 
     # Convert the dataframe to a dictionary and save it as a JSON file
     output_file = Path.cwd() / "gauntlet_master_data.json"
