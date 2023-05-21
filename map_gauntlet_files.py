@@ -49,6 +49,7 @@ def main(
     master_data_file: str = "gauntlet_master_data.json",
     filename_column: str = "file_name",
     output_file: str = None,
+    save_parquet: bool = False,
 ):
     setup_logging()
 
@@ -79,6 +80,12 @@ def main(
     # Save the dataframe to the output CSV file
     df.to_csv(output_file, index=False)
     logging.info(f"Saved mapped dataframe to:\n\t{str(output_file)}")
+    if save_parquet:
+        # Save the dataframe to a parquet file
+        df.to_parquet(output_file.with_suffix(".parquet"), index=False)
+        logging.info(
+            f"Saved data as parquet to:\n\t{str(output_file.with_suffix('.parquet'))}"
+        )
 
 
 if __name__ == "__main__":
