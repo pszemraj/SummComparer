@@ -96,7 +96,7 @@ def main(
 
     # Load the dataframe from the CSV file
     df = pd.read_csv(dataframe_file).convert_dtypes()
-    logging.info(f"Loaded dataframe, shaoe: {df.shape}")
+    logging.info(f"Loaded dataframe, shape: {df.shape}")
     assert (
         text_col_name in df.columns
     ), f"{text_col_name} not in dataframe columns. Found: {df.columns}"
