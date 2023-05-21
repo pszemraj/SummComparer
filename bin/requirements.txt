@@ -1,0 +1,9 @@
+fire
+optimum
+optimum-intel
+pandas
+torch
+tqdm
+transformers
+accelerate
+```
