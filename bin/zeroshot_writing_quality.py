@@ -3,6 +3,15 @@ zeroshot_writing_quality - predict the quality of a text string or file (datafra
 
 Usage:
     zeroshot_writing_quality.py <input> [--output_folder=<output_folder>] [--model_name=<model_name>] [--batch_size=<batch_size>] [--fp16] [--tf32] [--bf16] [--8bit] [--device=<device>] [--detail] [--verbose] [--log_file=<log_file>]
+
+Some prominent zero-shot classification models:
+- microsoft/deberta-large-mnli
+- MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli
+- microsoft/deberta-xlarge-mnli
+- MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli
+- Narsil/deberta-large-mnli-zero-cls
+- microsoft/deberta-v2-xlarge-mnli
+- sileod/deberta-v3-large-tasksource-nli
 """
 import io
 import json
