@@ -1,5 +1,8 @@
 """
-compile_gauntlet.py is a script that compiles the Gauntlet dataset into a single CSV file.
+export_gauntlet - export the summary Gauntlet dataset to a CSV data file/parquet file
+
+Usage:
+    export_gauntlet.py <dropbox_link> [--output_folder=<output_folder>] [--keep_zip] [--keep_extracted] [--parquet] [--score_split_token=<score_split_token>]
 """
 import json
 import logging
@@ -52,18 +55,18 @@ def export_summary_gauntlet(
     output_folder: Optional[str] = None,
     keep_zip: bool = False,
     keep_extracted: bool = False,
-    parquet_save: bool = False,
+    parquet: bool = False,
     score_split_token: str = "Section Scores",
 ) -> None:
     """
     export_summary_gauntlet - export the summary Gauntlet dataset to a CSV data file
 
     :param str dropbox_link: link to the Dropbox zip file containing the Gauntlet dataset
-    :param Optional[str] output_folder: path to the output folder, defaults to None
-    :param bool parquet_save: whether to save the DataFrame to a parquet file, defaults to False
-    :param bool keep_zip: whether to keep the downloaded zip file, defaults to False
-    :param bool keep_extracted: whether to keep the extracted data, defaults to False
-    :param str score_split_token: token to split the scores on, defaults to "Section Scores"
+    :param Optional[str] output_folder: path to the output folder, default: None
+    :param bool parquet: whether to save the DataFrame to a parquet file, default: False
+    :param bool keep_zip: whether to keep the downloaded zip file, default: False
+    :param bool keep_extracted: whether to keep the extracted data, default: False
+    :param str score_split_token: token to split the summary text files on, default: "Section Scores"
     """
     logging.info("Downloading data...")
     data_zip_path = Path.cwd() / "data.zip"
@@ -102,7 +105,7 @@ def export_summary_gauntlet(
         row_dict = {
             "GAUNTLET_PATH": f_path.relative_to(extract_root_dir),
             "file_name": f_path.name,
-            "text": text,
+            "summary": text,
         }
         for key in params_dict.keys():
             row_dict[key] = params_dict[key]
@@ -121,12 +124,12 @@ def export_summary_gauntlet(
         )
         output_folder.mkdir(exist_ok=True, parents=True)
         logging.info(f"Saving the summary data to {output_folder}")
-        output_csv = output_folder / "gauntlet_summary_data.csv"
+        output_csv = output_folder / "summary_gauntlet_dataset.csv"
         df = df.convert_dtypes()
         print(df.info())
         df.to_csv(output_csv, index=False)
-        if parquet_save:
-            output_parquet = output_folder / "gauntlet_summary_data.parquet"
+        if parquet:
+            output_parquet = output_csv.with_suffix(".parquet")
             df.to_parquet(output_parquet, index=False)
             logging.info(f"Saved the summary data to {output_parquet}")
         logging.info(f"Done! saved the summary data to {output_csv}")
@@ -134,6 +137,7 @@ def export_summary_gauntlet(
         logging.warning("No data found in the specified directory.")
 
     if not keep_extracted:
+        logging.info("Removing extracted data folder...")
         shutil.rmtree(extract_root_dir)
 
 

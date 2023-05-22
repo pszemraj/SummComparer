@@ -1,5 +1,8 @@
 """
-build_src_df.py - Create a DataFrame from the master data and the original gauntlet docs text files
+build_src_df.py - Create a DataFrame containing original gauntlet docs text files and their metadata
+
+Usage:
+    build_src_df.py <src_dir> [--master_data=<master_data>] [--output_file=<output_file>] [--parquet] [--src_prefix=<src_prefix>]
 """
 import json
 import logging
@@ -50,16 +53,17 @@ def main(
     src_dir: str,
     master_data_file: str = "gauntlet_master_data.json",
     output_file: str = None,
-    save_parquet: bool = False,
+    parquet: bool = False,
     src_prefix: str = "source_doc",
 ):
     """
     main function for build_src_df.py
 
     :param str src_dir: source directory containing the original gauntlet docs text files
-    :param str master_data_file: path to the master data JSON file, defaults to "gauntlet_master_data.json"
-    :param str output_file: path to the output CSV file, defaults to "gauntlet_source_documents.csv"
-    :param bool save_parquet: whether to save the DataFrame to a parquet file, defaults to False
+    :param str master_data_file: path to the master data JSON file, default: "gauntlet_master_data.json"
+    :param str output_file: path to the output CSV file, default: "gauntlet_source_documents.csv"
+    :param bool parquet: whether to save the DataFrame to a parquet file, default: False
+    :param str src_prefix: prefix to use for the source document columns, default: "source_doc"
     """
     setup_logging()
 
@@ -85,7 +89,7 @@ def main(
     # Save the dataframe to the output CSV file
     df.to_csv(output_file, index=False)
     logging.info(f"Saved DataFrame to:\n\t{str(output_file)}")
-    if save_parquet:
+    if parquet:
         parquet_file = output_file.with_suffix(".parquet")
         df.to_parquet(parquet_file, index=False)
         logging.info(f"Saved DataFrame to:\n\t{str(parquet_file)}")

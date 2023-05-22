@@ -1,14 +1,26 @@
+"""
+create_master_data - Create a master data JSON file containing the source files and their metadata
+
+Usage:
+    create_master_data.py <input_file> [--output_file=<output_file>]
+"""
 import json
-import sys
+import logging
 import uuid
 from pathlib import Path
 
+import fire
 import pandas as pd
+
+logging.basicConfig(
+    filename="logfile.log",
+    level=logging.INFO,
+    format="%(asctime)s:%(levelname)s:%(message)s",
+)
 
 
 def infer_domain(filename):
-    # This function infers the domain from the filename
-    # You can replace this with your own logic
+    """Infer the domain from the filename."""
     if filename.startswith("ASR"):
         return "ASR"
     elif filename.startswith("OCR"):
@@ -19,18 +31,23 @@ def infer_domain(filename):
         return "Unknown"
 
 
-if __name__ == "__main__":
-    file_list = Path.cwd() / "gauntlet_docs_files.txt"
-    assert file_list.exists(), "gauntlet_docs_files.txt not found in current directory"
+def create_master_data(input_file: str, output_file: str = "gauntlet_master_data.json"):
+    """
+    create_master_data - Create a master data JSON file containing the source files and their metadata
 
-    with open(file_list, "r", encoding="utf-8") as f:
+    :param str input_file: path to a text file containing the list of source files
+    :param str output_file: path to the output JSON file
+    :raises FileNotFoundError: if the input file does not exist
+    """
+    input_file_path = Path(input_file)
+    if not input_file_path.exists():
+        logging.error(f"{input_file_path} does not exist.")
+        raise FileNotFoundError(f"{input_file_path} does not exist.")
+
+    logging.info(f"Processing {input_file_path}.")
+    with input_file_path.open("r", encoding="utf-8") as f:
         source_files = f.read().splitlines()
-    print(f"Found {len(source_files)} source files in gauntlet_docs_files.txt")
-
-    for file in source_files:
-        if not isinstance(file, str):
-            print(f"Non-string element found in source_files: {file}")
-            sys.exit()
+    logging.info(f"Found {len(source_files)} source files in {input_file_path}")
 
     # Create a master data dataframe with unique IDs for each source file
     master_data = pd.DataFrame(source_files, columns=["filename"])
@@ -41,8 +58,12 @@ if __name__ == "__main__":
     # Infer the domain from the filename
     master_data["domain"] = master_data["filename"].apply(infer_domain)
 
-    # Convert the dataframe to a dictionary and save it as a JSON file
-    output_file = Path.cwd() / "gauntlet_master_data.json"
-    with open(output_file, "w", encoding="utf-8") as f:
+    output_file_path = Path(output_file)
+    logging.info(f"Saving master data to {output_file_path}")
+    with output_file_path.open("w", encoding="utf-8") as f:
         json.dump(master_data.to_dict(orient="records"), f, indent=3)
-    print(f"Saved master data to {output_file}")
+    logging.info(f"Saved master data to {output_file_path}")
+
+
+if __name__ == "__main__":
+    fire.Fire(create_master_data)

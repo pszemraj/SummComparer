@@ -1,3 +1,9 @@
+"""
+map_gauntlet_files - fuzzy-match the summary files to their original input doc via a master data file
+
+Usage:
+    map_gauntlet_files.py <summary_file> [--master_data=<master_data>] [--filename_column=<filename_column>] [--src_prefix=<src_prefix>]
+"""
 import json
 import logging
 from pathlib import Path
@@ -5,7 +11,7 @@ from pathlib import Path
 import fire
 import pandas as pd
 from rapidfuzz import fuzz, process
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 
 def setup_logging():
@@ -25,15 +31,15 @@ def get_best_match(
     master_data: str or Path = "gauntlet_master_data.json",
     filename_column: str = "filename",
     src_prefix: str = "source_doc",
-):
+) -> dict:
     """
     get_best_match - match a summary file to a source file in the master data
 
-    :param strorPath summary_file: _description_
-    :param strorPath master_data: _description_, defaults to "gauntlet_master_data.json"
-    :param str filename_column: _description_, defaults to "filename"
-    :param str src_prefix: _description_, defaults to "source_doc"
-    :return _type_: _description_
+    :param strorPath summary_file: path to the summary file
+    :param strorPath master_data: path to the master data JSON file, default: "gauntlet_master_data.json"
+    :param str filename_column: name of the filename column in the master data, default: "filename"
+    :param str src_prefix: prefix to add to the keys in the returned dict, default: "source_doc"
+    :return dict: dict of the best match record from the master data
     """
     # Remove the '_summary.txt' from the summary filename
     clean_summary_file = summary_file.replace("_summary.txt", "").strip()
@@ -66,8 +72,17 @@ def main(
     master_data_file: str = "gauntlet_master_data.json",
     filename_column: str = "file_name",
     output_file: str = None,
-    save_parquet: bool = False,
+    parquet: bool = False,
 ):
+    """
+    main - main function for the map_gauntlet_files script
+
+    :param str dataframe_file: path to the CSV data file containing summary data
+    :param str master_data_file: path to the JSON master data file, defaults to "gauntlet_master_data.json"
+    :param str filename_column: name of the filename column in the master data, defaults to "file_name"
+    :param str output_file: path to the output CSV file, defaults to None
+    :param bool parquet: also save the output as a parquet file, defaults to False
+    """
     setup_logging()
 
     master_data_file = Path(master_data_file)
@@ -77,7 +92,7 @@ def main(
     output_file = (
         Path(output_file)
         if output_file
-        else dataframe_file.parent / "gauntlet_docs_files_mapped.csv"
+        else dataframe_file.parent / f"{dataframe_file.stem}_mapped_src_docs.csv"
     )
     logging.info(f"Output file: {output_file}")
     master_data = load_master_data(master_data_file)
@@ -96,7 +111,7 @@ def main(
     # Save the dataframe to the output CSV file
     df.to_csv(output_file, index=False)
     logging.info(f"Saved mapped dataframe to:\n\t{str(output_file)}")
-    if save_parquet:
+    if parquet:
         # Save the dataframe to a parquet file
         df.to_parquet(output_file.with_suffix(".parquet"), index=False)
         logging.info(
