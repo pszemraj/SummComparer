@@ -21,20 +21,20 @@ SummComparer is an initiative aimed at compiling, scrutinizing, and analyzing a 
 
 The primary goal of SummComparer is to evaluate the effectiveness of different summarization models/architectures when applied to a variety of long documents, _none of which_ are explicitly part of a summarization training dataset[^1]. The "gauntlet" is an intentionally broad range of domains designed to test the quality of summarization both within and beyond the model's training domain.
 
-The overall goal is to gain insight into the generalizability of these models in real-world situations where the domain and content of the documents to be summarized are unpredictable[^2]. This will help to identify the limitations of these models and, ideally, shed light on the underlying mechanisms that contribute to their performance or lack thereof.
+Therefore, studying the process of "running the gauntlet" serves as a proxy for real-world situations where the domain and content of the inputs are unpredictable[^2]. This will help to identify the limitations of current models and, ideally, shed light on the underlying mechanisms for performing well.
 
 [^1]: As it turns out, the practical application of summarization models **is not** the ritual of summarizing documents _you already know the summary of_ and benchmarking their ability to regurgitate these back to you via ROUGE scores as a testament of their performance. Who knew?
 [^2]: i.e. you are not trying to hit a high score on the test set of [arXiv summarization](https://paperswithcode.com/dataset/arxiv-summarization-dataset) as a measure of a "good model", but rather actually read and use the summaries in real life.
 
-In simple terms, SummComparer can be thought of as a case study for the following scenario:
+Said another way, SummComparer can be thought of as a case study for the following scenario:
 
-- Suppose you have a collection of documents that you need to summarize or understand for some purpose.
-- You don't know what domain(s) these documents belong to, **mainly because you haven't read them**, and you don't have the time or inclination to read them all.
-  - You would prefer to get a general understanding of the content of these documents from a summary, and then decide which ones (if any) warrant more detailed reading.
-- You are not sure what the ideal summaries of these documents should look like, **primarily because if you knew that, there would be no need for a summary.**.
-- The question then arises: Which model(s) should you use? How do you determine the reliability of the results? How can you determine whether the model is performing optimally or not?
+- You have a collection of documents that you need to summarize/understand for some purpose.
+- You don't know what domain(s) these documents belong to, **because you haven't read them**, and you don't have the time or inclination to read them in full.
+  - You'd hope to get a general understanding of these documents via summaries, and then plan to decide which ones to read in full.
+- You are not sure what the ideal summaries of these documents are **because if you knew that, you wouldn't need to summarize them with a language model**.
+- Therefore: Which model(s) should you use? How do you determine the reliability of the results? How can you determine whether the model is performing optimally or not?
 
-The idea for this project (and the gauntlet itself) was born out of necessity: to test whether a summarization model was "good" or not, I would run it on a consistent set of documents and compare the generated summaries with the output of other models and my growing understanding of the documents themselves.
+The idea for this project was born out of necessity: to test whether a summarization model was "good" or not, I would run it on a consistent set of documents and compare the generated summaries with the outputs of other models and my growing understanding of the documents themselves.
 
 If `<new summarization model or technique>` claiming to be amazing is unable to summarize the [navy seals copypasta](https://knowyourmeme.com/memes/navy-seal-copypasta), OCR'd powerpoint slides, or a [short story](https://en.wikipedia.org/wiki/The_Most_Dangerous_Game), then it's probably not going to be very useful in the real world.
 
