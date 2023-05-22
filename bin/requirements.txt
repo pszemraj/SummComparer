@@ -1,10 +1,10 @@
+accelerate
+clean-text
 fire
 optimum
 optimum-intel
 pandas
+sentencepiece
 torch
 tqdm
 transformers
-accelerate
-clean-text
-```
