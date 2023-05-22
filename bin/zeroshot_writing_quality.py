@@ -168,7 +168,7 @@ def process_dataframe(
         logging.info(f"Results saved to {output_path}")
 
     metadata = {
-        "input_file": df.name,
+        "input_dataframe": df.info().to_dict(),
         "results": pd.DataFrame(results.to_list()).describe().to_dict(),
         "model": classifier.model.config.name_or_path,
         "timestamp": get_timestamp(),
