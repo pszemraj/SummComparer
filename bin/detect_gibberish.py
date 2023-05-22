@@ -1,12 +1,18 @@
+"""
+detect_gibberish.py - Detect gibberish text using a trained text classifier
+
+Usage:
+    detect_gibberish.py [options] <input_file>
+"""
 import logging
 from pathlib import Path
 
 import fire
 import pandas as pd
-from tqdm import tqdm
-from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
 import torch
 from cleantext import clean
+from tqdm import tqdm
+from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
 
 
 def setup_logging():
@@ -85,7 +91,10 @@ def main(
     output_file = (
         Path(output_file)
         if output_file
-        else Path.cwd() / "output" / f"{dataframe_file.stem}_gibberish_preds.csv"
+        else Path.cwd()
+        / "output"
+        / "gibberish-prediction"
+        / f"{dataframe_file.stem}_gibberish_preds.csv"
     )
     output_file.parent.mkdir(parents=True, exist_ok=True)
     logging.info(f"Output file: {output_file}")

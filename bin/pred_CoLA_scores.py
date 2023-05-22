@@ -1,12 +1,18 @@
+"""
+pred_CoLA_scores.py - Predict CoLA scores for a given dataset
+
+Usage:
+    pred_CoLA_scores.py [options] <input_file>
+"""
 import logging
 from pathlib import Path
 
 import fire
 import pandas as pd
-from tqdm import tqdm
-from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
 import torch
 from cleantext import clean
+from tqdm import tqdm
+from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
 
 
 def setup_logging():
