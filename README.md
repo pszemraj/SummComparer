@@ -4,6 +4,12 @@
 
 **NOTE: THIS IS A WORK IN PROGRESS**
 
+The purpose of this project/dataset is to examine the performance of various summarization models on a variety of long documents **none of which were part of the model's training data**[^1]. The goal is to gain some insight into what generalizes "in the wild", what doesn't, and ideally why.
+
+[^1]: As it turns out, the practical application of summarization models is **not** to summarize documents _you already know the summary of_ and present their ability to repeat them back to you with ROUGE scores as a measure of performance. Who knew?
+
+---
+
 ## Install
 
 ```bash
