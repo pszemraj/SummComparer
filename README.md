@@ -24,13 +24,13 @@ SummComparer's main aim is to test how well various summarization models work on
 [^1]: As it turns out, the practical application of summarization models **is not** the ritual of summarizing documents _you already know the summary of_ and benchmarking their ability to regurgitate these back to you via ROUGE scores as a testament of their performance. Who knew?
 [^2]: i.e. you are not trying to hit a high score on the test set of [arXiv summarization](https://paperswithcode.com/dataset/arxiv-summarization-dataset) as a measure of a "good model", but rather actually read and use the summaries in real life.
 
-Said another way, SummComparer can be thought of as a case study for the following scenario:
+Put another way, SummComparer can be thought of as a case study for the following scenario:
 
-- You have a collection of documents that you need to summarize/understand for some purpose.
-- You don't know what domain(s) these documents belong to, **because you haven't read them**, and you don't have the time or inclination to read them in full.
-  - You'd hope to get a general understanding of these documents via summaries, and then plan to decide which ones to read in full.
-- You are not sure what the ideal summaries of these documents are **because if you knew that, you wouldn't need to summarize them with a language model**.
-- Therefore: Which model(s) should you use? How do you determine the reliability of the results? How can you determine whether the model is performing optimally or not?
+- You have a collection of documents that you need to summarize/understand for `<reason>`.
+- You don't know what domain(s) these documents belong to **because you haven't read them**, and you don't have the time or inclination to read them fully.
+  - You're hoping to get a general understanding of these documents from summaries, and then plan to decide which ones to do more in-depth reading on.
+- You're not sure what the ideal summaries of these documents are **because if you knew that, you wouldn't need to summarize them with a language model**.
+- So: Which model(s) should you use? How can you determine if the outputs are faithful without reading the source documents? Can you determine whether the model is performing well or not?
 
 The idea for this project was born out of necessity: to test whether a summarization model was "good" or not, I would run it on a consistent set of documents and compare the generated summaries with the outputs of other models and my growing understanding of the documents themselves.
 
