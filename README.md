@@ -19,9 +19,7 @@ SummComparer is an initiative aimed at compiling, scrutinizing, and analyzing a 
 
 ## About
 
-The primary goal of SummComparer is to evaluate the effectiveness of different summarization models/architectures when applied to a variety of long documents, _none of which_ are explicitly part of a summarization training dataset[^1]. The "gauntlet" is an intentionally broad range of domains designed to test the quality of summarization both within and beyond the model's training domain.
-
-Therefore, studying the process of "running the gauntlet" serves as a proxy for real-world situations where the domain and content of the inputs are unpredictable[^2]. This will help to identify the limitations of current models and, ideally, shed light on the underlying mechanisms for performing well.
+SummComparer's main aim is to test how well various summarization models work on long documents from a wide range of topics, **none of which** are part of standard training data[^1]. This "gauntlet" of topics helps us see how well the models can summarize both familiar and unfamiliar content. By doing this, we can understand how these models might perform in real-world situations where the content is unpredictable[^2]. This also helps us identify their limitations and ideally, understand what makes them work well.
 
 [^1]: As it turns out, the practical application of summarization models **is not** the ritual of summarizing documents _you already know the summary of_ and benchmarking their ability to regurgitate these back to you via ROUGE scores as a testament of their performance. Who knew?
 [^2]: i.e. you are not trying to hit a high score on the test set of [arXiv summarization](https://paperswithcode.com/dataset/arxiv-summarization-dataset) as a measure of a "good model", but rather actually read and use the summaries in real life.
