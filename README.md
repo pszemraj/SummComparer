@@ -30,7 +30,7 @@ Put another way, SummComparer can be thought of as a case study for the followin
 - You don't know what domain(s) these documents belong to **because you haven't read them**, and you don't have the time or inclination to read them fully.
   - You're hoping to get a general understanding of these documents from summaries, and then plan to decide which ones to do more in-depth reading on.
 - You're not sure what the ideal summaries of these documents are **because if you knew that, you wouldn't need to summarize them with a language model**.
-- So: Which model(s) should you use? How can you determine if the outputs are faithful without reading the source documents? Can you determine whether the model is performing well or not?
+- So: Which model(s) should you use? How can you determine if the outputs are faithful without reading the source documents? How can you determine whether the model is performing well or not?
 
 The idea for this project was born out of necessity: to test whether a summarization model was "good" or not, I would run it on a consistent set of documents and compare the generated summaries with the outputs of other models and my growing understanding of the documents themselves.
 
