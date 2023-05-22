@@ -1,3 +1,5 @@
+accelerate
+clean-text
 fire
 optimum
 optimum-intel
@@ -5,6 +7,3 @@ pandas
 torch
 tqdm
 transformers
-accelerate
-clean-text
-```
