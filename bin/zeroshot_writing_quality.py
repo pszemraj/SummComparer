@@ -8,10 +8,11 @@ import json
 import logging
 import pprint as pp
 import time
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 import fire
+import numpy as np
 import pandas as pd
 import torch
 from tqdm.auto import tqdm
@@ -47,6 +48,13 @@ DEFAULT_LABELS = [
     "objective",
     "well-structured",
 ]
+
+
+class CustomEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, (pd.core.dtypes.dtypes.StringDtype, np.dtype)):
+            return str(obj)
+        return super().default(obj)
 
 
 def infer_quality(
