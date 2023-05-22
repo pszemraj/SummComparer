@@ -45,6 +45,8 @@ label_map_CoLA = {
     "LABEL_0": "unacceptable",
     "acceptable": "acceptable",
     "LABEL_1": "acceptable",
+    "Human": "acceptable",
+    "ChatGPT": "unacceptable",
 }
 
 
