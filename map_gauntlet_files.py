@@ -29,7 +29,7 @@ def load_master_data(master_data_file):
 def get_best_match(
     summary_file: str or Path,
     master_data: str or Path = "gauntlet_master_data.json",
-    filename_column: str = "filename",
+    filename_key: str = "filename",
     src_prefix: str = "source_doc",
 ) -> dict:
     """
@@ -37,24 +37,21 @@ def get_best_match(
 
     :param strorPath summary_file: path to the summary file
     :param strorPath master_data: path to the master data JSON file, default: "gauntlet_master_data.json"
-    :param str filename_column: name of the filename column in the master data, default: "filename"
+    :param str filename_key: key in the master data JSON file that contains the filename, default: "filename"
     :param str src_prefix: prefix to add to the keys in the returned dict, default: "source_doc"
     :return dict: dict of the best match record from the master data
     """
-    # Remove the '_summary.txt' from the summary filename
+    # Remove the '_summary.txt' suffix
     clean_summary_file = summary_file.replace("_summary.txt", "").strip()
 
     try:
-        # Use fuzzywuzzy's process.extractOne() function to find the source file that best matches the summary file
         best_match = process.extractOne(
-            clean_summary_file, [record[filename_column] for record in master_data]
+            clean_summary_file, [record[filename_key] for record in master_data]
         )
 
-        # Get the record of the best match from the master_data
         best_match_record = next(
-            record for record in master_data if record[filename_column] == best_match[0]
+            record for record in master_data if record[filename_key] == best_match[0]
         )
-        # update all keys to start with src_prefix
         best_match_record = {
             f"{src_prefix}_{k}": v for k, v in best_match_record.items()
         }
@@ -71,15 +68,17 @@ def main(
     dataframe_file: str,
     master_data_file: str = "gauntlet_master_data.json",
     filename_column: str = "file_name",
+    src_prefix: str = "source_doc",
     output_file: str = None,
     parquet: bool = False,
+    drop_ids: list = None,
 ):
     """
     main - main function for the map_gauntlet_files script
 
     :param str dataframe_file: path to the CSV data file containing summary data
     :param str master_data_file: path to the JSON master data file, defaults to "gauntlet_master_data.json"
-    :param str filename_column: name of the filename column in the master data, defaults to "file_name"
+    :param str filename_column: column name in dataframe_file containing the filename, defaults to "file_name"
     :param str output_file: path to the output CSV file, defaults to None
     :param bool parquet: also save the output as a parquet file, defaults to False
     """
@@ -104,10 +103,25 @@ def main(
     tqdm.pandas(desc="Mapping files")
     df = df.join(
         df[filename_column].progress_apply(
-            lambda x: pd.Series(get_best_match(x, master_data))
+            lambda x: pd.Series(get_best_match(x, master_data, src_prefix=src_prefix))
         )
     )
-
+    if drop_ids:
+        search_col = f"{src_prefix}_id"
+        if isinstance(drop_ids, str):
+            drop_ids = [drop_ids]
+        logging.info(f"Dropping rows with values in {search_col} matching: {drop_ids}")
+        # check if any ids are not actually in master data and warn
+        valid_ids = {record["id"] for record in master_data}
+        invalid_ids = set(drop_ids) - set(valid_ids)
+        if invalid_ids:
+            logging.warning(
+                f"Warning: {len(invalid_ids)} ids not found in master data: {invalid_ids}"
+            )
+        start_len = len(df)
+        df = df[~df[search_col].isin(drop_ids)]
+        df.reset_index(drop=True, inplace=True)
+        logging.info(f"Dropped {start_len - len(df)} rows, new length: {len(df)}")
     # Save the dataframe to the output CSV file
     df.to_csv(output_file, index=False)
     logging.info(f"Saved mapped dataframe to:\n\t{str(output_file)}")
