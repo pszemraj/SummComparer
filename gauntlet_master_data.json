@@ -17,27 +17,27 @@
    {
       "filename": "ASR-whisper-rpunctuated_Noam Chomsky, Fundam_1669853561_0_part1.txt",
       "id": "fed834b5-a04",
-      "domain": "ASR"
+      "domain": "ASR_cleaned"
    },
    {
       "filename": "ASR-whisper-rpunctuated_Noam Chomsky, Fundam_1669853631_0_part2.txt",
       "id": "aa279e3b-2d1",
-      "domain": "ASR"
+      "domain": "ASR_cleaned"
    },
    {
       "filename": "Emie_dissertation_cleansed.txt",
       "id": "7a72cd85-984",
-      "domain": "Unknown"
+      "domain": "academic_paper"
    },
    {
       "filename": "gpt_peter_testing_group_exemplars.txt",
       "id": "3210a55b-6fd",
-      "domain": "Unknown"
+      "domain": "conversation"
    },
    {
       "filename": "navy seals copy pasta.txt",
       "id": "6adec8a8-d94",
-      "domain": "Unknown"
+      "domain": "adversarial"
    },
    {
       "filename": "OCR_ML4HLecture02image_.txt",
@@ -57,22 +57,22 @@
    {
       "filename": "OCR_PAPER_dall-e-2-annotated_.txt",
       "id": "3f42d484-d96",
-      "domain": "OCR"
+      "domain": "OCR_academic_paper"
    },
    {
       "filename": "OCR_PAPER_Hong et al. - 2022 - CogVideo Large-scale Pretraining for Text-to-Video Generation via Transformers-annotated_.txt",
       "id": "66f03e4f-bd9",
-      "domain": "OCR"
+      "domain": "OCR_academic_paper"
    },
    {
       "filename": "OCR_PAPER_Kandpal, Nieto, Jin - 2022 - Music Enhancement via Image Translation and Vocoding-annotated_.txt",
       "id": "110b05be-f8d",
-      "domain": "OCR"
+      "domain": "OCR_academic_paper"
    },
    {
       "filename": "OCR_PAPER_Quadruped_Puppeteering.txt",
       "id": "3b1981b2-2c1",
-      "domain": "OCR"
+      "domain": "OCR_academic_paper"
    },
    {
       "filename": "script_findingnemo.txt",
@@ -97,6 +97,6 @@
    {
       "filename": "The Most Dangerous Game--Richard Connell.txt",
       "id": "af2b1960-5ca",
-      "domain": "Unknown"
+      "domain": "literature"
    }
 ]
