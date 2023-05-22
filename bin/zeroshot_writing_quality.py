@@ -51,8 +51,12 @@ DEFAULT_LABELS = [
 
 
 class CustomEncoder(json.JSONEncoder):
+    """CustomEncoder - custom JSON encoder for numpy and pandas objects"""
+
     def default(self, obj):
-        if isinstance(obj, (pd.core.dtypes.dtypes.StringDtype, np.dtype)):
+        if isinstance(obj, pd.StringDtype):
+            return str(obj)
+        if isinstance(obj, np.dtype):
             return str(obj)
         return super().default(obj)
 
