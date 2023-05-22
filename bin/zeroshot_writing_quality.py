@@ -38,6 +38,8 @@ def enable_tf32():
     torch.backends.cuda.matmul.allow_tf32 = True
 
 
+_here = Path(__file__).resolve().parent
+_root = _here.parent
 DTYPE_MAP = {"fp32": torch.float32, "bf16": torch.bfloat16, "8bit": torch.uint8}
 DEFAULT_LABELS = [
     "logically coherent",
@@ -182,7 +184,7 @@ def process_dataframe(
     output_path = (
         Path(output_path)
         if output_path
-        else Path.cwd() / f"{df.name}_WQ_predictions.csv"
+        else Path.cwd() / f"{get_timestamp()}_WQ_predictions.csv"
     )
     logging.info(
         f"Processing DataFrame with {len(df)} rows - text column: {text_column}"
@@ -285,7 +287,14 @@ def main(
                 if input_path.suffix == ".csv"
                 else pd.read_parquet(input_path)
             )
-            output_path = input_path.parent / f"{input_path.stem}_WQ_predictions.csv"
+            output_path = (
+                _root
+                / "output"
+                / model_name.split("/")[-1]
+                / f"{input_path.stem}_WQ_predictions.csv"
+            )
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            logger.info(f"Saving results to {output_path}")
             df = df.sample(n=10).convert_dtypes() if test_df else df.convert_dtypes()
 
             logger.info(
