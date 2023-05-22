@@ -4,6 +4,7 @@ zeroshot_writing_quality - predict the quality of a text string or file (datafra
 Usage:
     zeroshot_writing_quality.py <input> [--output_folder=<output_folder>] [--model_name=<model_name>] [--batch_size=<batch_size>] [--fp16] [--tf32] [--bf16] [--8bit] [--device=<device>] [--detail] [--verbose] [--log_file=<log_file>]
 """
+import io
 import json
 import logging
 import pprint as pp
@@ -204,9 +205,10 @@ def process_dataframe(
     else:
         df.to_csv(output_path, index=False)
         logging.info(f"Results saved to {output_path}")
-
+    buffer = io.StringIO()
+    df.info(buf=buffer)
     metadata = {
-        "input_dataframe": df.dtypes.to_dict(),
+        "input_dataframe": buffer.getvalue(),
         "results": results.reset_index(drop=True).to_dict(),
         "model": classifier.model.config.name_or_path,
         "timestamp": get_timestamp(),
