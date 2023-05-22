@@ -1,4 +1,6 @@
-# SummComparer: Comparative analysis of summarization models
+# SummComparer
+
+> **Comparative analysis of summarization models**
 
 SummComparer is an initiative aimed at compiling, scrutinizing, and analyzing a [Summarization Gauntlet](https://www.dropbox.com/sh/axu1xlscrrexy55/AADAm01-4Zs3POyHQrgbDAsda?dl=0) with the goal of understanding/improving _what makes a summarization model do well_ in practical everyday use cases.
 
@@ -6,7 +8,7 @@ SummComparer is an initiative aimed at compiling, scrutinizing, and analyzing a 
 
 ---
 
-- [SummComparer: Comparative analysis of summarization models](#summcomparer-comparative-analysis-of-summarization-models)
+- [SummComparer](#summcomparer)
   - [About](#about)
   - [Installation](#installation)
   - [Usage](#usage)
@@ -51,6 +53,8 @@ pip install -r bin/requirements.txt
 ```
 
 ## Usage
+
+As the dataset is already compiled, you can skip to the [Working with the Dataset](#working-with-the-dataset) section for most use cases.
 
 ### Compiling the Gauntlet
 
