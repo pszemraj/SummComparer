@@ -18,6 +18,8 @@ pip install -r bin/requirements.txt
 
 ## Usage
 
+### Compiling the Gauntlet
+
 Currently limited to CLI usage. Recommended order of operations:
 
 ```bash
@@ -32,5 +34,22 @@ all CLI scripts use the `fire` package for CLI generation. For more information 
 python <script_name>.py --help
 ```
 
+### Using the dataset
+
+> **NOTE:** data is currently in a "raw" format and has not had useless columns removed or been cleaned in any way. This will be done in a future release.
+
+Files are in `as-dataset/` and are saved as `.parquet`. There are two files:
+
+- `as-dataset/gauntlet_input_documents.parquet`: contains the input documents for the gauntlet with metadata/`id` fields as defined in `gauntlet_master_data.json`
+- `as-dataset/summary_gauntlet_dataset_mapped_src_docs.parquet` contains the output summaries for the gauntlet with hyperparameters/models as columns.
+  - Additionally, all summaries (rows) are mapped to their source documents (columns) by columns prefixed with `source_doc`.
+
+The data can be loaded with `pandas`:
+
+```python
+import pandas as pd
+df = pd.read_parquet('as-dataset/summary_gauntlet_dataset_mapped_src_docs.parquet')
+df.info()
+```
 
 ---
