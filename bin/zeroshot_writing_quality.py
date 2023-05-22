@@ -188,6 +188,7 @@ def process_dataframe(
     )
     tqdm.pandas(desc="Processing DataFrame")
     results = df[text_column].progress_apply(lambda x: infer_quality(x, classifier))
+    results = results.reset_index(drop=True)
     logging.info("finished predicting on DataFrame")
     # initialize new columns
     for label in results[0].keys():
