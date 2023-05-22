@@ -206,7 +206,7 @@ def process_dataframe(
 
     metadata = {
         "input_dataframe": df.dtypes.to_dict(),
-        "results": pd.DataFrame(results.to_list()).describe().to_dict(),
+        "results": results.reset_index(drop=True).to_dict(),
         "model": classifier.model.config.name_or_path,
         "timestamp": get_timestamp(),
     }
