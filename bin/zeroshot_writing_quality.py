@@ -221,6 +221,7 @@ def main(
     dtype_model="fp32",
     truncation_max_length: int = None,
     text_column="summary",
+    test_df: bool = False,
     parquet=False,
     tf32=False,
     loglevel="INFO",
@@ -276,8 +277,11 @@ def main(
                 else pd.read_parquet(input_path)
             )
             output_path = input_path.parent / f"{input_path.stem}_WQ_predictions.csv"
-            df = df.convert_dtypes()
-            logger.info(f"Processing DataFrame with {len(df)} rows")
+            df = df.sample(n=10).convert_dtypes() if test_df else df.convert_dtypes()
+
+            logger.info(
+                f"Processing DataFrame with {len(df)} rows (test mode: {test_df})"
+            )
             process_dataframe(
                 df,
                 classifier,
