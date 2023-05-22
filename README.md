@@ -13,6 +13,7 @@ The latest version of the dataset can also be found [on huggingface here](https:
 - [SummComparer](#summcomparer)
   - [About](#about)
     - [A Case Study](#a-case-study)
+  - [EDA links](#eda-links)
   - [Installation](#installation)
   - [Usage](#usage)
     - [Compiling the Gauntlet](#compiling-the-gauntlet)
