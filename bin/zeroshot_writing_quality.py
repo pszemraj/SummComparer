@@ -19,16 +19,19 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipe
 
 
 def setup_logging(level=logging.INFO):
+    """setup_logging - set up logging"""
     logging.basicConfig(level=level, format="%(levelname)s: %(message)s")
 
 
 def get_timestamp(detail=False):
+    """get_timestamp - get a timestamp string"""
     if detail:
         return datetime.now().strftime("%Y-%m-%d_%H-%M-%S-%f")
     return datetime.now().strftime("%b-%d-%Y_%H-%M")
 
 
 def enable_tf32():
+    """enable_tf32 - enable TensorFloat32 (TF32) computation"""
     logging.debug("Enabling TF32 computation")
     torch.backends.cuda.matmul.allow_tf32 = True
 
@@ -129,13 +132,23 @@ def predict_file(
 
 
 def process_dataframe(
-    df,
-    classifier,
+    df: pd.DataFrame,
+    classifier: pipeline,
     text_column: str = "text",
-    output_path=None,
+    output_path: str = None,
     parquet=False,
     prefix: str = "pred_WQ",
 ):
+    """
+    process_dataframe - helper function to process a DataFrame with a text column
+
+    :param pd.DataFrame df: dataframe to process
+    :param pipeline classifier: zero-shot classifier pipeline
+    :param str text_column: name of text column in DataFrame, defaults to "text"
+    :param str output_path: path to save results to, defaults to None
+    :param bool parquet: save results as parquet file, defaults to False
+    :param str prefix: prefix for predicted label columns, defaults to "pred_WQ"
+    """
     assert isinstance(df, pd.DataFrame), "Input must be a DataFrame"
     assert (
         text_column in df.columns
