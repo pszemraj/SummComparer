@@ -3,6 +3,7 @@ import logging
 import pprint as pp
 import time
 from pathlib import Path
+from datetime import datetime
 
 import fire
 import pandas as pd
@@ -13,6 +14,17 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipe
 
 def setup_logging(level=logging.INFO):
     logging.basicConfig(level=level, format="%(levelname)s: %(message)s")
+
+
+def get_timestamp(detail=False):
+    if detail:
+        return datetime.now().strftime("%Y-%m-%d_%H-%M-%S-%f")
+    return datetime.now().strftime("%b-%d-%Y_%H-%M")
+
+
+def enable_tf32():
+    logging.debug("Enabling TF32 computation")
+    torch.backends.cuda.matmul.allow_tf32 = True
 
 
 DTYPE_MAP = {"fp32": torch.float32, "bf16": torch.bfloat16, "8bit": torch.uint8}
@@ -103,6 +115,7 @@ def predict_file(
         "input_file": input_file,
         "results": result,
         "model": classifier.model.config.name_or_path,
+        "timestamp": get_timestamp(),
     }
     with open(output_path, "w", encoding="utf-8") as file:
         json.dump(outdata, file, indent=4)
@@ -148,6 +161,16 @@ def process_dataframe(
         df.to_csv(output_path, index=False)
         logging.info(f"Results saved to {output_path}")
 
+    metadata = {
+        "input_file": df.name,
+        "results": pd.DataFrame(results.to_list()).describe().to_dict(),
+        "model": classifier.model.config.name_or_path,
+        "timestamp": get_timestamp(),
+    }
+    with open(output_path.with_suffix(".json"), "w", encoding="utf-8") as file:
+        json.dump(metadata, file, indent=4)
+    logging.info(f"Metadata saved to {output_path.with_suffix('.json')}")
+
 
 def main(
     input_data: str,
@@ -156,6 +179,7 @@ def main(
     truncation_max_length: int = None,
     text_column="summary",
     parquet=False,
+    tf32=False,
     loglevel="INFO",
     verbose=False,
 ):
@@ -168,12 +192,14 @@ def main(
     :param int truncation_max_length: override default truncation length to N tokens, defaults to None
     :param str text_column: name of text column if using dataframe input, defaults to "summary"
     :param bool parquet: save output as parquet file, defaults to False
+    :param bool tf32: enable tf32 precision, defaults to False
     :param str loglevel: logging level, defaults to "INFO"
     :param bool verbose: print verbose output, defaults to False
     """
     setup_logging(level=logging.getLevelName(loglevel.upper()))
     logger = logging.getLogger(__name__)
-
+    if tf32:
+        enable_tf32()
     logger.info(f"loading model: {model_name}")
     tokenizer = AutoTokenizer.from_pretrained(
         model_name, model_max_length=truncation_max_length
