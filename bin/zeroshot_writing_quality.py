@@ -205,11 +205,12 @@ def process_dataframe(
     else:
         df.to_csv(output_path, index=False)
         logging.info(f"Results saved to {output_path}")
+
     buffer = io.StringIO()
     df.info(buf=buffer)
     metadata = {
         "input_dataframe": buffer.getvalue(),
-        "results": results.reset_index(drop=True).to_dict(),
+        "pred_stats": results.describe().to_dict(),
         "model": classifier.model.config.name_or_path,
         "timestamp": get_timestamp(),
     }
