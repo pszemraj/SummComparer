@@ -1,22 +1,52 @@
-# SummComparer
+# SummComparer: Comparative analysis of summarization models
 
-> A V1 take at compiling [the summarization gauntlet](https://www.dropbox.com/sh/axu1xlscrrexy55/AADAm01-4Zs3POyHQrgbDAsda?dl=0)
+SummComparer is an initiative aimed at compiling, scrutinizing, and analyzing a [Summarization Gauntlet](https://www.dropbox.com/sh/axu1xlscrrexy55/AADAm01-4Zs3POyHQrgbDAsda?dl=0) with the goal of understanding/improving _what makes a summarization model do well_ in practical everyday use cases.
 
-**NOTE: THIS IS A WORK IN PROGRESS**
-
-The purpose of this project/dataset is to examine the performance of various summarization models on a variety of long documents **none of which were part of the model's training data**[^1]. The goal is to gain some insight into what generalizes "in the wild", what doesn't, and ideally why.
-
-[^1]: As it turns out, the practical application of summarization models is **not** to summarize documents _you already know the summary of_ and present their ability to repeat them back to you with ROUGE scores as a measure of performance. Who knew?
+⚠️ This project is currently under active development and will continue to evolve over time. ⚠️
 
 ---
 
-## Install
+- [SummComparer: Comparative analysis of summarization models](#summcomparer-comparative-analysis-of-summarization-models)
+  - [About](#about)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [Compiling the Gauntlet](#compiling-the-gauntlet)
+    - [Working with the Dataset](#working-with-the-dataset)
+      - [Input Documents](#input-documents)
+      - [Exploring the Dataset](#exploring-the-dataset)
+
+---
+
+## About
+
+The primary goal of SummComparer is to evaluate the effectiveness of different summarization models/architectures when applied to a variety of long documents, _none of which_ are explicitly part of a summarization training dataset[^1]. The "gauntlet" is an intentionally broad range of domains designed to test the quality of summarization both within and beyond the model's training domain.
+
+The overall goal is to gain insight into the generalizability of these models in real-world situations where the domain and content of the documents to be summarized are unpredictable[^2]. This will help to identify the limitations of these models and, ideally, shed light on the underlying mechanisms that contribute to their performance or lack thereof.
+
+[^1]: As it turns out, the practical application of summarization models **is not** the ritual of summarizing documents _you already know the summary of_ and benchmarking their ability to regurgitate these back to you via ROUGE scores as a testament of their performance. Who knew?
+[^2]: i.e. you are not trying to hit a high score on the test set of [arXiv summarization](https://paperswithcode.com/dataset/arxiv-summarization-dataset) as a measure of a "good model", but rather actually read and use the summaries in real life.
+
+In simple terms, SummComparer can be thought of as a case study for the following scenario:
+
+- Suppose you have a collection of documents that you need to summarize or understand for some purpose.
+- You don't know what domain(s) these documents belong to, **mainly because you haven't read them**, and you don't have the time or inclination to read them all.
+  - You would prefer to get a general understanding of the content of these documents from a summary, and then decide which ones (if any) warrant more detailed reading.
+- You are not sure what the ideal summaries of these documents should look like, **primarily because if you knew that, there would be no need for a summary.**.
+- The question then arises: Which model(s) should you use? How do you determine the reliability of the results? How can you determine whether the model is performing optimally or not?
+
+The idea for this project (and the gauntlet itself) was born out of necessity: to test whether a summarization model was "good" or not, I would run it on a consistent set of documents and compare the generated summaries with the output of other models and my growing understanding of the documents themselves.
+
+If `<new summarization model or technique>` claiming to be amazing is unable to summarize the [navy seals copypasta](https://knowyourmeme.com/memes/navy-seal-copypasta), OCR'd powerpoint slides, or a [short story](https://en.wikipedia.org/wiki/The_Most_Dangerous_Game), then it's probably not going to be very useful in the real world.
+
+## Installation
+
+To install the necessary packages, run the following command:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-package requirements for using the scripts in `bin/` can be installed from that directory with:
+To install the package requirements for using the scripts in `bin/`, navigate to that directory and run:
 
 ```bash
 pip install -r bin/requirements.txt
@@ -26,7 +56,7 @@ pip install -r bin/requirements.txt
 
 ### Compiling the Gauntlet
 
-Currently limited to CLI usage. Recommended order of operations:
+The current version supports Command Line Interface (CLI) usage. The recommended sequence of operations is as follows:
 
 ```bash
 export_gauntlet.py
@@ -34,23 +64,22 @@ map_gauntlet_files.py
 build_src_df.py
 ```
 
-all CLI scripts use the `fire` package for CLI generation. For more information on how to use the CLI, run:
+All CLI scripts utilize the `fire` package for CLI generation. For more information on how to use the CLI, run:
 
 ```bash
 python <script_name>.py --help
 ```
 
-### Using the dataset
+### Working with the Dataset
 
-> **NOTE:** data is currently in a "raw" format and has not had useless columns removed or been cleaned in any way. This will be done in a future release.
+> **Note:** The current version of the dataset is in a "raw" format. It has not been cleaned or pruned of unnecessary columns. This will be addressed in a future release.
 
-Files are in `as-dataset/` and are saved as `.parquet`. There are two files, which can be thought of as two tables in a relational database:
+The dataset files are located in `as-dataset/` and are saved as `.parquet` files. The dataset comprises two files, which can be conceptualized as two tables in a relational database:
 
-- `as-dataset/gauntlet_input_documents.parquet`: contains the input documents for the gauntlet with metadata/`id` fields as defined in `gauntlet_master_data.json`
-- `as-dataset/summary_gauntlet_dataset_mapped_src_docs.parquet` contains the output summaries for the gauntlet with hyperparameters/models as columns.
-  - Additionally, all summaries (rows) are mapped to their source documents (columns) by columns prefixed with `source_doc`.
+- `as-dataset/gauntlet_input_documents.parquet`: This file contains the input documents for the gauntlet along with metadata/`id` fields as defined in `gauntlet_master_data.json`.
+- `as-dataset/summary_gauntlet_dataset_mapped_src_docs.parquet`: This file contains the output summaries for the gauntlet with hyperparameters/models as columns. All summaries (rows) are mapped to their source documents (columns) by columns prefixed with `source_doc`.
 
-The data can be loaded with `pandas`:
+You can load the data using `pandas`:
 
 ```python
 import pandas as pd
@@ -60,7 +89,7 @@ df.info()
 
 #### Input Documents
 
-Almost all of the information needed is in the `summary_gauntlet_dataset_mapped_src_docs.parquet`, and the `gauntlet_input_documents.parquet` is only needed if you want to look at the source documents themselves, or do some sort of analysis using their text.
+The `gauntlet_input_documents.parquet` file is required only if you need to examine the source documents themselves or perform any analysis using their text. Most of the necessary information is available in the `summary_gauntlet_dataset_mapped_src_docs.parquet` file.
 
 The `gauntlet_input_documents.parquet` file contains the following columns:
 
@@ -74,27 +103,28 @@ Data columns (total 4 columns):
  #   Column               Non-Null Count  Dtype
 ---  ------               --------------  -----
  0   source_doc_filename  19 non-null     string
- 1   source_doc_id        19 non-null     string
+
+1   source_doc_id        19 non-null     string
  2   source_doc_domain    19 non-null     string
  3   document_text        19 non-null     string
 dtypes: string(4)
 memory usage: 736.0 bytes
 ```
 
-The `source_doc_id` column is present in both files and can be used to join them together.
+The `source_doc_id` column, present in both files, can be used to join them together.
 
-#### Exploring the dataset
+#### Exploring the Dataset
 
-There are many EDA tools out there, but for initial exploration and testing, I'd recommend `dtale` for it's flexibility and ease of use. It can be installed with:
+There are numerous Exploratory Data Analysis (EDA) tools available. For initial exploration and testing, `dtale` is recommended due to its flexibility and user-friendly interface. Install it with:
 
 ```bash
 pip install dtale
 ```
 
-You can then spin up a UI instance from the command line with:
+You can then launch a UI instance from the command line with:
 
 ```bash
 dtale --parquet-path as-dataset/summary_gauntlet_dataset_mapped_src_docs.parquet
 ```
 
----
+Please note that this project is a work in progress. Future updates will include data cleaning, removal of unnecessary columns, and additional features to enhance the usability and functionality of the project.
