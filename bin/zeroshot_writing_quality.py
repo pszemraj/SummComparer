@@ -195,7 +195,7 @@ def process_dataframe(
         "timestamp": get_timestamp(),
     }
     with open(output_path.with_suffix(".json"), "w", encoding="utf-8") as file:
-        json.dump(metadata, file, indent=4)
+        json.dump(metadata, file, indent=4, cls=CustomEncoder)
     logging.info(f"Metadata saved to {output_path.with_suffix('.json')}")
 
 
