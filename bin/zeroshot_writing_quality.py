@@ -210,7 +210,10 @@ def process_dataframe(
     df.info(buf=buffer)
     metadata = {
         "input_dataframe": pp.pformat(buffer.getvalue()),
-        "pred_stats": pd.DataFrame(results).convert_dtypes().describe().to_dict(),
+        "pred_stats": pd.DataFrame(results)
+        .apply(pd.to_numeric, errors="coerce")
+        .describe()
+        .to_dict(),
         "model": classifier.model.config.name_or_path,
         "timestamp": get_timestamp(),
     }
