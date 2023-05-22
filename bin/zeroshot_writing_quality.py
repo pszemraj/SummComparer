@@ -208,17 +208,19 @@ def process_dataframe(
 
     buffer = io.StringIO()
     df.info(buf=buffer)
+    df_results = pd.DataFrame(list(results))  # convert list of dicts to DataFrame
+
     metadata = {
         "input_dataframe": pp.pformat(buffer.getvalue()),
-        "pred_stats": pd.DataFrame(results)
-        .apply(pd.to_numeric, errors="coerce")
+        "pred_stats": df_results.apply(pd.to_numeric, errors="coerce")
         .describe()
-        .to_dict(),
+        .T.to_dict(),
         "model": classifier.model.config.name_or_path,
         "timestamp": get_timestamp(),
     }
     with open(output_path.with_suffix(".json"), "w", encoding="utf-8") as file:
         json.dump(metadata, file, indent=4, cls=CustomEncoder)
+
     logging.info(f"Metadata saved to {output_path.with_suffix('.json')}")
 
 
