@@ -2,15 +2,18 @@
 
 > **Comparative analysis of summarization models**
 
+⚠️ This project is currently under active development and will continue to evolve over time. ⚠️
+
 SummComparer is an initiative aimed at compiling, scrutinizing, and analyzing a [Summarization Gauntlet](https://www.dropbox.com/sh/axu1xlscrrexy55/AADAm01-4Zs3POyHQrgbDAsda?dl=0) with the goal of understanding/improving _what makes a summarization model do well_ in practical everyday use cases.
 
-⚠️ This project is currently under active development and will continue to evolve over time. ⚠️
+The latest version of the dataset can also be found [on huggingface here](https://huggingface.co/datasets/pszemraj/summcomparer-gauntlet-v0.1) and loaded with `datasets`.
 
 ---
 
 - [SummComparer](#summcomparer)
   - [About](#about)
     - [A Case Study](#a-case-study)
+  - [EDA links](#eda-links)
   - [Installation](#installation)
   - [Usage](#usage)
     - [Compiling the Gauntlet](#compiling-the-gauntlet)
@@ -40,6 +43,13 @@ Put another way, SummComparer can be thought of as a case study for the followin
 The idea for this project was born out of necessity: to test whether a summarization model was "good" or not, I would run it on a consistent set of documents and compare the generated summaries with the outputs of other models and my growing understanding of the documents themselves.
 
 If `<new summarization model or technique>` claiming to be amazing is unable to summarize the [navy seals copypasta](https://knowyourmeme.com/memes/navy-seal-copypasta), OCR'd powerpoint slides, or a [short story](https://en.wikipedia.org/wiki/The_Most_Dangerous_Game), then it's probably not going to be very useful in the real world.
+
+## EDA links
+
+From `pandas-profiling`:
+
+- [summary outputs](https://gauntlet-compiled-eda-v0p1.netlify.app/)
+- [input docs](https://gauntlet-inputs-eda-v0p1.netlify.app/)
 
 ## Installation
 
