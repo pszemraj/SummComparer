@@ -209,8 +209,8 @@ def process_dataframe(
     buffer = io.StringIO()
     df.info(buf=buffer)
     metadata = {
-        "input_dataframe": buffer.getvalue(),
-        "pred_stats": results.describe().to_dict(),
+        "input_dataframe": pp.pformat(buffer.getvalue()),
+        "pred_stats": pd.DataFrame(results).describe().to_dict(),
         "model": classifier.model.config.name_or_path,
         "timestamp": get_timestamp(),
     }
