@@ -67,7 +67,7 @@ class CustomEncoder(json.JSONEncoder):
         if isinstance(obj, pd.StringDtype):
             return str(obj)
         if isinstance(obj, pd.Int64Dtype):
-            return str(int(obj))
+            return str(obj)
         if isinstance(obj, np.dtype):
             return str(obj)
         return super().default(obj)
