@@ -4,6 +4,7 @@ fire
 optimum
 optimum-intel
 pandas
+sentencepiece
 torch
 tqdm
 transformers
