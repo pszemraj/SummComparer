@@ -1,3 +1,9 @@
+"""
+zeroshot_writing_quality - predict the quality of a text string or file (dataframe or plain text)
+
+Usage:
+    zeroshot_writing_quality.py <input> [--output_folder=<output_folder>] [--model_name=<model_name>] [--batch_size=<batch_size>] [--fp16] [--tf32] [--bf16] [--8bit] [--device=<device>] [--detail] [--verbose] [--log_file=<log_file>]
+"""
 import json
 import logging
 import pprint as pp
@@ -201,8 +207,12 @@ def main(
     if tf32:
         enable_tf32()
     logger.info(f"loading model: {model_name}")
-    tokenizer = AutoTokenizer.from_pretrained(
-        model_name, model_max_length=truncation_max_length
+    tokenizer = (
+        AutoTokenizer.from_pretrained(
+            model_name, model_max_length=truncation_max_length
+        )
+        if truncation_max_length
+        else AutoTokenizer.from_pretrained(model_name)
     )
 
     model = AutoModelForSequenceClassification.from_pretrained(
