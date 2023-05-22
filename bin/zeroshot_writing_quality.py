@@ -172,7 +172,7 @@ def process_dataframe(
     for idx, result in enumerate(tqdm(results, desc="Appending Results")):
         for label, score in result.items():
             df.loc[idx, f"{prefix}_{label}"] = score
-
+    df = df.convert_dtypes()
     if parquet:
         df.to_parquet(output_path.with_suffix(".parquet"))
         logging.info(f"Results saved to {output_path.with_suffix('.parquet')}")
@@ -181,7 +181,7 @@ def process_dataframe(
         logging.info(f"Results saved to {output_path}")
 
     metadata = {
-        "input_dataframe": df.info().to_dict(),
+        "input_dataframe": df.dtypes.to_dict(),
         "results": pd.DataFrame(results.to_list()).describe().to_dict(),
         "model": classifier.model.config.name_or_path,
         "timestamp": get_timestamp(),
