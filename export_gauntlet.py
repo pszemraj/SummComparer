@@ -19,6 +19,20 @@ from tqdm.auto import tqdm
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
+DEFAULT_REMOVE_COLS = [
+    "input_dir",
+    "extension",
+    "tokenizer_name",
+    "input_data",
+    "split_name",
+    "source_column",
+    "recursive",
+    "output_dir",
+    "compile_model",
+    "unlimiformer_version",
+    "textsum_version",
+    "command",
+]
 KEY_MAPPING = {
     "run_date": "date",
     "date-run": "date",
@@ -28,20 +42,9 @@ KEY_MAPPING = {
     "model": "model_name",
     "METADATA.META_huggingface_model": "model_name",
     "META_textsum_version": "textsum_version",
+    "max_new_tokens": "max_length",
+    "max_input_length": "token_batch_length",
 }
-
-
-# def standardize_keys(json_obj: dict, mapping: dict) -> dict:
-#     standardized_json = {}
-#     for key, value in json_obj.items():
-#         if isinstance(value, dict):
-#             value = standardize_keys(value, mapping)
-#         if key in mapping:
-#             standardized_key = mapping[key]
-#         else:
-#             standardized_key = key
-#         standardized_json[standardized_key] = value
-#     return standardized_json
 
 
 def standardize_keys(
@@ -84,6 +87,7 @@ def export_summary_gauntlet(
     output_folder: Optional[str] = None,
     no_skip_textsum_cfg: bool = False,
     score_split_token: str = "Section Scores",
+    drop_cols: list = DEFAULT_REMOVE_COLS,
     keep_zip: bool = False,
     keep_extracted: bool = False,
     parquet: bool = False,
@@ -171,6 +175,13 @@ def export_summary_gauntlet(
 
     df["GAUNTLET_PATH"] = df.GAUNTLET_PATH.apply(lambda x: str(x))
     df.dropna(axis=1, how="all", inplace=True)
+
+    logging.info(f"Cleaning up and dropping columns: {drop_cols}")
+    for col in drop_cols:
+        if col in df.columns:
+            df.drop(col, axis=1, inplace=True)
+        else:
+            logging.warning(f"Column {col} not found in DataFrame.")
 
     output_folder = Path(output_folder) if output_folder else Path.cwd() / "as-dataset"
     output_folder.mkdir(exist_ok=True, parents=True)
