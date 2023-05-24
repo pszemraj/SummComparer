@@ -1,9 +1,14 @@
 """
 export_gauntlet - export the summary Gauntlet dataset to a CSV data file/parquet file
 
+    this script expects something similar to the 'gauntlet generated summaries' dir, with generated summaries in
+    the bottom-most directories with a 'params.json' file in the same directory as the generated summaries
+
+    example link to use (at time of writing): https://www.dropbox.com/sh/7clo2upybq0f3ts/AABpdY1nqWsjTJxIwAdXRMdBa?dl=1
 Usage:
-    export_gauntlet.py <dropbox_link> [--output_folder=<output_folder>] [--keep_zip] [--keep_extracted] [--parquet] [--score_split_token=<score_split_token>]
+    export_gauntlet.py <dropbox_link> [--output_folder=<output_folder>] [--no_skip_textsum_cfg] [--score_split_token=<score_split_token>] [--drop_cols=<drop_cols>] [--keep_zip] [--keep_extracted] [--parquet] [--debug]
 """
+import pprint as pp
 import json
 import logging
 import os
@@ -50,6 +55,15 @@ KEY_MAPPING = {
 def standardize_keys(
     json_obj: dict, mapping: dict, collapse_sub_dicts: bool = True
 ) -> dict:
+    """
+    standardize_keys - standardize the keys in a JSON object
+
+    :param dict json_obj: dictionary to standardize the keys of
+    :param dict mapping: dictionary mapping old keys to new keys
+    :param bool collapse_sub_dicts: whether to collapse sub-dictionaries, defaults to True
+    :return dict: standardized dictionary
+    """
+
     def flatten_dict(d, parent_key="", sep=".", track_key: bool = False):
         items = []
         for k, v in d.items():
@@ -68,6 +82,7 @@ def standardize_keys(
 def download_and_extract_data(
     dropbox_link: str, data_zip_path: Path, extract_root_dir: Path = None
 ):
+    """download_and_extract_data - download and extract the Gauntlet data"""
     extract_root_dir = extract_root_dir or Path.cwd() / "gauntlet"
     if extract_root_dir.exists():
         logging.warning(f"Removing existing directory: {extract_root_dir}")
@@ -93,15 +108,19 @@ def export_summary_gauntlet(
     parquet: bool = False,
     debug: bool = False,
 ) -> None:
-    """
-    export_summary_gauntlet - export the summary Gauntlet dataset to a CSV data file
+    f"""
+    export_summary_gauntlet - export the summary Gauntlet dataset to a CSV data file/parquet file
 
-    :param str dropbox_link: link to the Dropbox zip file containing the Gauntlet dataset
-    :param Optional[str] output_folder: path to the output folder, default: None
-    :param bool parquet: whether to save the DataFrame to a parquet file, default: False
-    :param bool keep_zip: whether to keep the downloaded zip file, default: False
-    :param bool keep_extracted: whether to keep the extracted data, default: False
-    :param str score_split_token: token to split the summary text files on, default: "Section Scores"
+    :param str dropbox_link: link to the dropbox folder containing the Gauntlet data
+    :param Optional[str] output_folder: folder to save the output CSV file, defaults to None
+    :param bool no_skip_textsum_cfg: do not skip the textsum config files, defaults to False
+    :param str score_split_token: substring to split the summary text on, defaults to "Section Scores"
+    :param list drop_cols: list of columns to drop, defaults to {pp.pformat(DEFAULT_REMOVE_COLS)}
+    :param bool keep_zip: keep the downloaded zip file, defaults to False
+    :param bool keep_extracted: keep the extracted data folder, defaults to False
+    :param bool parquet: also save the output as a parquet file, defaults to False
+    :param bool debug: enable debug logging, defaults to False
+    :raises ValueError: if the specified directory does not exist
     """
     if debug:
         logging.getLogger().setLevel(logging.DEBUG)
