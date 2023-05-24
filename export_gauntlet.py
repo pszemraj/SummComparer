@@ -53,10 +53,12 @@ def download_and_extract_data(dropbox_link: str, data_zip_path: Path) -> None:
 def export_summary_gauntlet(
     dropbox_link: str,
     output_folder: Optional[str] = None,
+    no_skip_textsum_cfg: bool = False,
+    score_split_token: str = "Section Scores",
     keep_zip: bool = False,
     keep_extracted: bool = False,
     parquet: bool = False,
-    score_split_token: str = "Section Scores",
+    debug: bool = False,
 ) -> None:
     """
     export_summary_gauntlet - export the summary Gauntlet dataset to a CSV data file
@@ -68,7 +70,10 @@ def export_summary_gauntlet(
     :param bool keep_extracted: whether to keep the extracted data, default: False
     :param str score_split_token: token to split the summary text files on, default: "Section Scores"
     """
-    logging.info("Downloading data...")
+    if debug:
+        logging.getLogger().setLevel(logging.DEBUG)
+    logging.info("Starting export of the summary Gauntlet dataset...")
+    logging.info(f"Downloading data from {dropbox_link}")
     data_zip_path = Path.cwd() / "data.zip"
     download_and_extract_data(dropbox_link, data_zip_path)
     if not keep_zip:
@@ -80,8 +85,12 @@ def export_summary_gauntlet(
 
     for f_path in tqdm(extract_root_dir.glob("**/*"), desc="Processing files"):
         if f_path.is_dir() or (f_path.suffix not in {".json", ".txt"}):
+            logging.debug(f"Skipping non-text file: {f_path}")
             continue
 
+        if not no_skip_textsum_cfg and f_path.name == "textsum_config.json":
+            logging.debug(f"Skipping {f_path}")
+            continue
         if f_path.suffix == ".json":
             params_dict = {}
             try:
