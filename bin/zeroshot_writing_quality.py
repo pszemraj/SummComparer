@@ -49,6 +49,7 @@ def enable_tf32():
 
 _here = Path(__file__).resolve().parent
 _root = _here.parent
+
 DTYPE_MAP = {"fp32": torch.float32, "bf16": torch.bfloat16, "8bit": torch.uint8}
 DEFAULT_LABELS = [
     "logically coherent",
@@ -59,6 +60,14 @@ DEFAULT_LABELS = [
     "comprehensive",
     "objective",
     "well-structured",
+    "uses simple language",
+    "uses technical jargon",
+    "avoids ambiguity",
+    "maintains consistent tense and perspective",
+    "maintains logical progression",
+    "keeps to the main topic",
+    "connects ideas smoothly",
+    "provides adequate context",
 ]
 
 
@@ -106,7 +115,7 @@ def infer_quality(
     result = classifier(
         sequence_to_classify.strip(),
         candidate_labels,
-        hypothesis_template="This document summary is {}",
+        hypothesis_template="The text in this document summary is {}",
         multi_label=True,
         truncation=True,
     )
