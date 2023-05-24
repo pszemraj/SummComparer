@@ -6,6 +6,7 @@ Usage:
 """
 import json
 import logging
+import os
 import shutil
 from pathlib import Path
 from typing import Optional
@@ -42,12 +43,21 @@ def standardize_keys(json_obj: dict, mapping: dict) -> dict:
     return standardized_json
 
 
-def download_and_extract_data(dropbox_link: str, data_zip_path: Path) -> None:
+def download_and_extract_data(
+    dropbox_link: str, data_zip_path: Path, extract_root_dir: Path = None
+):
+    extract_root_dir = extract_root_dir or Path.cwd() / "gauntlet"
+    if extract_root_dir.exists():
+        logging.warning(f"Removing existing directory: {extract_root_dir}")
+        shutil.rmtree(extract_root_dir)
+
     response = requests.get(dropbox_link)
     with data_zip_path.open("wb") as f:
         f.write(response.content)
     with ZipFile(data_zip_path, "r") as zf:
-        zf.extractall("gauntlet")
+        zf.extractall(extract_root_dir)
+    logging.info(f"Extracted data to {extract_root_dir}")
+    return extract_root_dir
 
 
 def export_summary_gauntlet(
@@ -75,55 +85,70 @@ def export_summary_gauntlet(
     logging.info("Starting export of the summary Gauntlet dataset...")
     logging.info(f"Downloading data from {dropbox_link}")
     data_zip_path = Path.cwd() / "data.zip"
-    download_and_extract_data(dropbox_link, data_zip_path)
+    extract_root_dir = download_and_extract_data(dropbox_link, data_zip_path)
+
     if not keep_zip:
         data_zip_path.unlink()
-    extract_root_dir = Path("gauntlet")
     assert extract_root_dir.exists(), "The specified directory does not exist."
 
     df_list = []
-
-    for f_path in tqdm(extract_root_dir.glob("**/*"), desc="Processing files"):
-        if f_path.is_dir() or (f_path.suffix not in {".json", ".txt"}):
-            logging.debug(f"Skipping non-text file: {f_path}")
+    bottom_dirs = [
+        Path(dir) for dir, subdirs, files in os.walk(extract_root_dir) if not subdirs
+    ]
+    for bottom_dir in tqdm(bottom_dirs, desc="Processing gauntlet output"):
+        params_dict = {}
+        _local_files = [f for f in bottom_dir.iterdir() if f.is_file()]
+        _local_files.sort(
+            key=lambda f: (f.suffix != ".json", f)
+        )  # all json files first
+        _local_suffixes = {f.suffix for f in _local_files}
+        if not ".txt" in _local_suffixes:
+            logging.debug(f"Skipping non-text directory: {bottom_dir}")
             continue
+        if not ".json" in _local_suffixes:
+            logging.warning(f"No JSON file found for: {bottom_dir}")
 
-        if not no_skip_textsum_cfg and f_path.name == "textsum_config.json":
-            logging.debug(f"Skipping {f_path}")
-            continue
-        if f_path.suffix == ".json":
-            params_dict = {}
-            try:
-                with f_path.open("r", encoding="utf-8", errors="ignore") as f:
-                    params_dict = json.load(f)
-            except json.JSONDecodeError:
-                logging.error(f"Error loading JSON file: {f_path}")
+        for f_path in _local_files:
+            if f_path.is_dir() or (f_path.suffix not in {".json", ".txt"}):
+                logging.debug(f"Skipping non-text file: {f_path}")
                 continue
 
-            params_dict = standardize_keys(params_dict, KEY_MAPPING)
-            continue
+            if not no_skip_textsum_cfg and f_path.name == "textsum_config.json":
+                logging.debug(f"Skipping {f_path}")
+                continue
+            if f_path.suffix == ".json":
+                params_dict = {}
+                try:
+                    with f_path.open("r", encoding="utf-8", errors="ignore") as f:
+                        params_dict = json.load(f)
+                except json.JSONDecodeError:
+                    logging.error(f"Error loading JSON file: {f_path}")
+                    continue
 
-        try:
-            with f_path.open("r", encoding="utf-8", errors="ignore") as f:
-                text = f.read()
-            text = text.split(score_split_token, maxsplit=1)[0].strip()
-        except FileNotFoundError:
-            logging.error(f"File not found: {f_path}")
-            continue
+                params_dict = standardize_keys(params_dict, KEY_MAPPING)
+                continue
 
-        row_dict = {
-            "GAUNTLET_PATH": f_path.relative_to(extract_root_dir),
-            "file_name": f_path.name,
-            "summary": text,
-        }
-        for key in params_dict.keys():
-            row_dict[key] = params_dict[key]
-        df_list.append(pd.DataFrame([row_dict]))
+            try:
+                with f_path.open("r", encoding="utf-8", errors="ignore") as f:
+                    text = f.read()
+                text = text.split(score_split_token, maxsplit=1)[0].strip()
+            except FileNotFoundError:
+                logging.error(f"File not found: {f_path}")
+                continue
+
+            row_dict = {
+                "GAUNTLET_PATH": f_path.relative_to(extract_root_dir),
+                "file_name": f_path.name,
+                "summary": text,
+            }
+            for key in params_dict.keys():
+                row_dict[key] = params_dict[key]
+            df_list.append(pd.DataFrame([row_dict]))
 
     if len(df_list) > 0:
         df = pd.concat(df_list, ignore_index=True)
     else:
-        df = pd.DataFrame()
+        raise ValueError("No data found in the specified directory.")
 
     df["GAUNTLET_PATH"] = df.GAUNTLET_PATH.apply(lambda x: str(x))
 
@@ -132,7 +157,7 @@ def export_summary_gauntlet(
             Path(output_folder) if output_folder else Path.cwd() / "as-dataset"
         )
         output_folder.mkdir(exist_ok=True, parents=True)
-        logging.info(f"Saving the summary data to {output_folder}")
+        logging.info(f"Saving the summary data to {output_folder} ...")
         output_csv = output_folder / "summary_gauntlet_dataset.csv"
         df = df.convert_dtypes()
         print(df.info())
@@ -140,8 +165,8 @@ def export_summary_gauntlet(
         if parquet:
             output_parquet = output_csv.with_suffix(".parquet")
             df.to_parquet(output_parquet, index=False)
-            logging.info(f"Saved the summary data to {output_parquet}")
-        logging.info(f"Done! saved the summary data to {output_csv}")
+            logging.info(f"Saved the summary data to:\n\t{output_parquet}")
+        logging.info(f"Done! saved the summary data to:\n\t{output_csv}")
     else:
         logging.warning("No data found in the specified directory.")
 
