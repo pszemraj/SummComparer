@@ -27,19 +27,38 @@ KEY_MAPPING = {
     "META_huggingface_model": "model_name",
     "model": "model_name",
     "METADATA.META_huggingface_model": "model_name",
+    "META_textsum_version": "textsum_version",
 }
 
 
-def standardize_keys(json_obj: dict, mapping: dict) -> dict:
-    standardized_json = {}
-    for key, value in json_obj.items():
-        if isinstance(value, dict):
-            value = standardize_keys(value, mapping)
-        if key in mapping:
-            standardized_key = mapping[key]
-        else:
-            standardized_key = key
-        standardized_json[standardized_key] = value
+# def standardize_keys(json_obj: dict, mapping: dict) -> dict:
+#     standardized_json = {}
+#     for key, value in json_obj.items():
+#         if isinstance(value, dict):
+#             value = standardize_keys(value, mapping)
+#         if key in mapping:
+#             standardized_key = mapping[key]
+#         else:
+#             standardized_key = key
+#         standardized_json[standardized_key] = value
+#     return standardized_json
+
+
+def standardize_keys(
+    json_obj: dict, mapping: dict, collapse_sub_dicts: bool = True
+) -> dict:
+    def flatten_dict(d, parent_key="", sep=".", track_key: bool = False):
+        items = []
+        for k, v in d.items():
+            new_key = parent_key + sep + k if parent_key and track_key else k
+            if isinstance(v, dict) and collapse_sub_dicts:
+                items.extend(flatten_dict(v, new_key, sep=sep).items())
+            else:
+                items.append((new_key, v))
+        return dict(items)
+
+    standardized_json = flatten_dict(json_obj)
+    standardized_json = {mapping.get(k, k): v for k, v in standardized_json.items()}
     return standardized_json
 
 
@@ -146,33 +165,32 @@ def export_summary_gauntlet(
             df_list.append(pd.DataFrame([row_dict]))
 
     if len(df_list) > 0:
-        df = pd.concat(df_list, ignore_index=True)
+        df = pd.concat(df_list, ignore_index=True).reset_index(drop=True)
     else:
         raise ValueError("No data found in the specified directory.")
 
     df["GAUNTLET_PATH"] = df.GAUNTLET_PATH.apply(lambda x: str(x))
+    df.dropna(axis=1, how="all", inplace=True)
 
-    if not df.empty:
-        output_folder = (
-            Path(output_folder) if output_folder else Path.cwd() / "as-dataset"
-        )
-        output_folder.mkdir(exist_ok=True, parents=True)
-        logging.info(f"Saving the summary data to {output_folder} ...")
-        output_csv = output_folder / "summary_gauntlet_dataset.csv"
-        df = df.convert_dtypes()
-        print(df.info())
-        df.to_csv(output_csv, index=False)
-        if parquet:
-            output_parquet = output_csv.with_suffix(".parquet")
-            df.to_parquet(output_parquet, index=False)
-            logging.info(f"Saved the summary data to:\n\t{output_parquet}")
-        logging.info(f"Done! saved the summary data to:\n\t{output_csv}")
-    else:
-        logging.warning("No data found in the specified directory.")
+    output_folder = Path(output_folder) if output_folder else Path.cwd() / "as-dataset"
+    output_folder.mkdir(exist_ok=True, parents=True)
+    logging.info(f"Saving the summary data to {output_folder} ...")
+    output_csv = output_folder / "summary_gauntlet_dataset.csv"
+
+    df = df.convert_dtypes()
+    print(df.info())
+    df.to_csv(output_csv, index=False)
+    logging.info(f"Export saved to:\n\t{output_csv}")
+    if parquet:
+        output_parquet = output_csv.with_suffix(".parquet")
+        df.to_parquet(output_parquet, index=False)
+        logging.info(f"Export saved as parquet:\n\t{output_parquet}")
 
     if not keep_extracted:
         logging.info("Removing extracted data folder...")
         shutil.rmtree(extract_root_dir)
+
+    logging.info("Done!")
 
 
 if __name__ == "__main__":
