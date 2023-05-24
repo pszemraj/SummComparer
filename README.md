@@ -117,16 +117,20 @@ RangeIndex: 19 entries, 0 to 18
 Data columns (total 4 columns):
  #   Column               Non-Null Count  Dtype
 ---  ------               --------------  -----
- 0   source_doc_filename  19 non-null     string
+0   source_doc_filename  19 non-null     string
 
 1   source_doc_id        19 non-null     string
- 2   source_doc_domain    19 non-null     string
- 3   document_text        19 non-null     string
+2   source_doc_domain    19 non-null     string
+3   document_text        19 non-null     string
 dtypes: string(4)
 memory usage: 736.0 bytes
 ```
 
-The `source_doc_id` column, present in both files, can be used to join them together.
+The `source_doc_id` column, present in both files, can be used to join them together. A script that does this for you can be found in `bin/`:
+
+```bash
+python bin/create_merged_df.py
+```
 
 #### Exploring the Dataset
 
