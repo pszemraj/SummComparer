@@ -100,12 +100,12 @@ def infer_quality(
     candidate_labels: list = None,
     n_digits: int = 6,
 ) -> dict:
-    """
+    f"""
     infer_quality - perform zero-shot classification on a text string
 
     :param str sequence_to_classify: the text string to classify
     :param pipeline classifier: zero-shot classifier pipeline
-    :param list candidate_labels: list of candidate labels, defaults to DEFAULT_LABELS
+    :param list candidate_labels: list of candidate labels, defaults to {DEFAULT_LABELS}
     :param int n_digits: number of digits to round scores to, defaults to 6
     :return dict: dictionary of labels and scores
     """
